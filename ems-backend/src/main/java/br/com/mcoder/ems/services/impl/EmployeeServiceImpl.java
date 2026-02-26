@@ -8,6 +8,9 @@ import br.com.mcoder.ems.repositories.EmployeeRepository;
 import br.com.mcoder.ems.services.EmployeeService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -33,5 +36,30 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id : " + employeeId));
 
         return EmployeeMapper.mapToEmployeeDto(employee);
+    }
+
+    @Override
+    public List<EmployeeDto> getAllEmployees() {
+        List<Employee> employees = employeeRepository.findAll();
+        return employees.stream().map((employee) -> EmployeeMapper.mapToEmployeeDto(employee))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public EmployeeDto updateEmployee(Long employeeId, EmployeeDto employeeDto) {
+        Employee employee = employeeRepository.findById(employeeId)
+        .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id : " + employeeId));
+
+        employee.setFirstName(employeeDto.getFirstName());
+        employee.setLastName(employeeDto.getLastName());
+        employee.setEmail(employeeDto.getEmail());
+
+        Employee updatedEmployee = employeeRepository.save(employee);
+        return EmployeeMapper.mapToEmployeeDto(updatedEmployee);
+    }
+
+    @Override
+    public void deleteEmployee(Long employeeId) {
+
     }
 }
