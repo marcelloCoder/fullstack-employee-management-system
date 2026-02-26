@@ -2,10 +2,12 @@ package br.com.mcoder.ems.services.impl;
 
 import br.com.mcoder.ems.dto.EmployeeDto;
 import br.com.mcoder.ems.entities.Employee;
+import br.com.mcoder.ems.exceptions.ResourceNotFoundException;
 import br.com.mcoder.ems.mapper.EmployeeMapper;
 import br.com.mcoder.ems.repositories.EmployeeRepository;
 import br.com.mcoder.ems.services.EmployeeService;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -27,6 +29,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto getEmployeeById(Long employeeId) {
-        return null;
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id : " + employeeId));
+
+        return EmployeeMapper.mapToEmployeeDto(employee);
     }
 }
