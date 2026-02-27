@@ -6,6 +6,7 @@ import br.com.mcoder.ems.exceptions.ResourceNotFoundException;
 import br.com.mcoder.ems.mapper.EmployeeMapper;
 import br.com.mcoder.ems.repositories.EmployeeRepository;
 import br.com.mcoder.ems.services.EmployeeService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,6 +61,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteEmployee(Long employeeId) {
-
+        Employee employee = employeeRepository.findById(employeeId)
+        .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id : " + employeeId));
+        employeeRepository.delete(employee);
     }
 }
