@@ -1,5 +1,5 @@
 import './App.css'
-import HelloWorld from './HelloWorld'
+import EmployeeComponent from './components/EmployeeComponent'
 import HeaderComponent from './components/HeaderComponent'
 import FooterComponent from './components/FooterComponent'
 import ListEmployeesComponent from './components/ListEmployeesComponent'
@@ -16,6 +16,8 @@ function App() {
         <Route path='/' element={<ListEmployeesComponent />} />
         {/*/ localhost:3000/employees */}
         <Route path='/employees' element={<ListEmployeesComponent />} />
+        {/*/ localhost:3000/add-employee */}
+        <Route path='/add-employee' element={<EmployeeComponent />} />
       </Routes>
       <FooterComponent />
     </Router>
