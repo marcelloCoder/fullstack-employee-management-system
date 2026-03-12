@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { createEmployee } from '../services/EmployeeService'
 
 function EmployeeComponent() {
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
+  const navigate = useNavigate()
 
   function saveEmployee(event){
     event.preventDefault();
@@ -12,13 +15,22 @@ function EmployeeComponent() {
     const employee = { firstName, lastName, email };
 
     console.log("Saving employee:", employee);
+
+    createEmployee(employee)
+      .then((response) => {
+        console.log('Employee created:', response.data)
+        navigate('/employees')
+      })
+      .catch((error) => {
+        console.error('Error creating employee:', error)
+      })
   }
   
   
   return (
     <div className='container'>
       <br />
-      <div className='row'>
+      <div className='row'> 
         <div className='card col-md-6 offset-md-3 offset-md-3'>
           <h2 className='text-center'>Add Employee</h2>
           <div className='card-body'>
