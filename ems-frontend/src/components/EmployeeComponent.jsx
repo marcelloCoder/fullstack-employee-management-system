@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { createEmployee } from '../services/EmployeeService'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { createEmployee, getEmployeeById, updateEmployee } from '../services/EmployeeService'
 
 function EmployeeComponent() {
 
@@ -8,6 +8,7 @@ function EmployeeComponent() {
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const navigate = useNavigate()
+  const { id } = useParams()
 
   const [errors, setErrors] = useState({
     firstName: '',
@@ -15,21 +16,40 @@ function EmployeeComponent() {
     email: ''
   })
 
+  useEffect(() => {
+    if (id) {
+      getEmployeeById(id)
+        .then((response) => {
+          const employee = response.data
+          setFirstName(employee.firstName || '')
+          setLastName(employee.lastName || '')
+          setEmail(employee.email || '')
+        })
+        .catch((error) => {
+          console.error('Error fetching employee:', error)
+        })
+    }
+  }, [id])
+
   function saveEmployee(event){
     event.preventDefault();
 
     if (validateForm()) {
       const employee = { firstName, lastName, email };
 
-      console.log("Saving employee:", employee);
-  
-      createEmployee(employee)
+      console.log(id ? "Updating employee:" : "Saving employee:", employee);
+
+      const request = id
+        ? updateEmployee(id, employee)
+        : createEmployee(employee)
+
+      request
         .then((response) => {
-          console.log('Employee created:', response.data)
+          console.log('Employee saved:', response.data)
           navigate('/employees')
         })
         .catch((error) => {
-          console.error('Error creating employee:', error)
+          console.error('Error saving employee:', error)
         })
     }
   }
@@ -69,7 +89,7 @@ function EmployeeComponent() {
       <br />
       <div className='row'> 
         <div className='card col-md-6 offset-md-3 offset-md-3'>
-          <h2 className='text-center'>Add Employee</h2>
+          <h2 className='text-center'>{id ? 'Update Employee' : 'Add Employee'}</h2>
           <div className='card-body'>
             <form>
               <div className='form-group mb-2'>
@@ -109,9 +129,18 @@ function EmployeeComponent() {
                 )}
               </div>
 
-              <button type='submit' className='btn btn-primary' onClick={saveEmployee}>
-                Submit
-              </button>
+              <div className='d-flex justify-content-between'>
+                <button
+                  type='button'
+                  className='btn btn-secondary'
+                  onClick={() => navigate('/employees')}
+                >
+                  Cancel
+                </button>
+                <button type='submit' className='btn btn-primary' onClick={saveEmployee}>
+                  {id ? 'Update Employee' : 'Save Employee'}
+                </button>
+              </div>
             </form>
           </div>
         </div>
